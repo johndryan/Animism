@@ -7,8 +7,11 @@ int sensorPin = 5;
 int maxDistance = 200;
 int minDistance = 500;
 
+char action = 's';
+
 void setup() {
-  //Serial.begin(9600);
+  Serial.begin(9600);
+  
   pinMode (MotorOneDirection, OUTPUT);
   pinMode (MotorOneSpeed, OUTPUT);
   pinMode (MotorTwoDirection, OUTPUT);
@@ -16,28 +19,40 @@ void setup() {
 }
 
 void loop(){
-  forward();
-  delay(2000);
-  stop();
-  delay(500);
-  left();
-  delay(2000);
-  stop();
-  delay(500);
-  backward();
-  delay(2000);
-  stop();
-  delay(500);
-  right();
-  delay(2000);
-  stop();
-  delay(500);
+  if (action == 'f') {
+    forward();
+  }
+  if (action == 'b') {
+    backward();
+  }
+  if (action == 'l') {
+    left();
+  }
+  if (action == 'r') { 
+    right();
+  }
+  if (action == 's') {
+    stopMe();
+  }
+}
+
+void serialEvent() {
+  while (Serial.available()) {
+    action = (char)Serial.read();
+  }
 }
 
 void forward() {
     digitalWrite(MotorOneDirection, HIGH);
     analogWrite(MotorOneSpeed, 255);
     digitalWrite(MotorTwoDirection, HIGH);
+    analogWrite(MotorTwoSpeed, 255);
+}
+
+void backward() {
+    digitalWrite(MotorOneDirection, LOW);
+    analogWrite(MotorOneSpeed, 255);
+    digitalWrite(MotorTwoDirection, LOW);
     analogWrite(MotorTwoSpeed, 255);
 }
 
@@ -55,14 +70,7 @@ void right() {
     analogWrite(MotorTwoSpeed, 255);
 }
 
-void backward() {
-    digitalWrite(MotorOneDirection, HIGH);
-    analogWrite(MotorOneSpeed, 255);
-    digitalWrite(MotorTwoDirection, HIGH);
-    analogWrite(MotorTwoSpeed, 255);
-}
-
-void stop() {
+void stopMe() {
     digitalWrite(MotorOneDirection, LOW);
     analogWrite(MotorOneSpeed, 0);
     digitalWrite(MotorTwoDirection, LOW);
