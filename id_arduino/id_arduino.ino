@@ -17,7 +17,7 @@ Servo rightServo;
 
 int speed = 50; //sets the speed of the robot (both servos) a percentage between 0 and 100
 int servoLeftOff = 90;
-int servoRightOff = 95;
+int servoRightOff = 90;
 
 int SensorLeft;
 int SensorRight;
@@ -123,44 +123,29 @@ void setSpeed(int newSpeed){
   speed = newSpeed * 0.9;                   //scales the speed to be between 0 and 90
 }
 
-/*
- * sends the robot forwards
- */
-void goForward(){
- leftServo.write(servoLeftOff + speed);
- rightServo.write(servoRightOff - speed);
-}
-
-/*
- * sends the robot backwards
- */
-void goBackward(){
- leftServo.write(servoLeftOff - speed);
- rightServo.write(servoRightOff + speed);
-}
-  
-/*
- * sends the robot right
- */
 void goRight(){
- leftServo.write(servoLeftOff + speed);
- rightServo.write(servoRightOff + speed);
+ leftServo.write(90 + speed);
+ rightServo.write(90 - speed);
 }
 
-/*
- * sends the robot left
- */
 void goLeft(){
- leftServo.write(servoLeftOff - speed);
- rightServo.write(servoRightOff - speed);
+ leftServo.write(90 - speed);
+ rightServo.write(90 + speed);
 }
 
-/*
- * stops the robot
- */
+void goForward(){
+ leftServo.write(90 + speed);
+ rightServo.write(90 + speed);
+}
+
+void goBackward(){
+ leftServo.write(90 - speed);
+ rightServo.write(90 - speed);
+}
+
 void goStop(){
- leftServo.write(servoLeftOff);
- rightServo.write(servoRightOff);
+ leftServo.write(90);
+ rightServo.write(90);
 } 
 //END OF ARDUINO CONTROLLED SERVO ROBOT (SERB) ROUTINES
 //------------------------------------------------------------------------------------------------------------
