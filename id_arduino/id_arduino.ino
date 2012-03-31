@@ -62,7 +62,7 @@ void loop()
   SensorDifference = abs(SensorLeft - SensorRight);       // This calculates the difference between the two sensors and then saves it to an integer.
   
   if (proxVal > minDistance) {
-    goStop();
+    goRight();
   } else {
     if (SensorLeft > SensorRight && SensorDifference > lightDiff) goRight();
     if (SensorLeft < SensorRight && SensorDifference > lightDiff) goLeft();
