@@ -83,6 +83,8 @@ void serbSetup(){
   goStop();                          //stops servos just in case still running
 }
 
+/* MODEL #1 */
+
 void goForward(){
  leftServo.write(90 + speed);
  rightServo.write(90 + speed);
@@ -102,6 +104,51 @@ void goLeft(){
  leftServo.write(90 - speed);
  rightServo.write(90 + speed);
 }
+
+/* MODEL #2 */
+
+//void goBackward(){
+// leftServo.write(90 + speed);
+// rightServo.write(90 - speed);
+//}
+//
+//void goForward(){
+// leftServo.write(90 - speed);
+// rightServo.write(90 + speed);
+//}
+//  
+//void goLeft(){
+// leftServo.write(90 + speed);
+// rightServo.write(90 + speed);
+//}
+//
+//void goRight(){
+// leftServo.write(90 - speed);
+// rightServo.write(90 - speed);
+//}
+
+/* MODEL #3 */
+
+//void goForward(){
+// leftServo.write(90 + speed);
+// rightServo.write(90 - speed);
+//}
+//
+//void goBackward(){
+// leftServo.write(90 - speed);
+// rightServo.write(90 + speed);
+//}
+//  
+//void goRight(){
+// leftServo.write(90 + speed);
+// rightServo.write(90 + speed);
+//}
+//
+//void goLeft(){
+// leftServo.write(90 - speed);
+// rightServo.write(90 - speed);
+//}
+
 
 void goStop(){
  leftServo.write(90);
