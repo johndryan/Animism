@@ -35,7 +35,7 @@ int servoLeftOff = 90;      // If left servo can't be adjusted manually, set the
 int servoRightOff = 90;     // If right servo can't be adjusted manually, set the stop value here
 
 int minDistance = 400;      // proximity is triggered above this
-int lightDiff = 125;        // sensitivity in difference between light sensors
+int lightDiff = 75;        // sensitivity in difference between light sensors
 
 
 // SETUP
