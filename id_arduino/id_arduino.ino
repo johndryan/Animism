@@ -26,6 +26,8 @@ int SensorLeft;
 int SensorRight;
 int SensorDifference;
 int proxVal = 500;
+int ledState = 0;
+long previousMillis = 0;
 
 // SETTINGS
 //--------------------------------------------------------------------------------- 
@@ -35,8 +37,9 @@ int servoLeftOff = 90;      // If left servo can't be adjusted manually, set the
 int servoRightOff = 90;     // If right servo can't be adjusted manually, set the stop value here
 
 int minDistance = 400;      // proximity is triggered above this
-int lightDiff = 75;        // sensitivity in difference between light sensors
+int lightDiff = 75;         // sensitivity in difference between light sensors
 
+long interval = 300;       // interval at which LEDs should blink (milliseconds)
 
 // SETUP
 //---------------------------------------------------------------------------------
@@ -68,6 +71,8 @@ void loop()
     if (SensorLeft < SensorRight && SensorDifference > lightDiff) goLeft();
     if (SensorDifference < lightDiff) goForward();
   }
+  
+  doLights();
 }
 
 // FUNCTIONS
@@ -82,6 +87,8 @@ void serbSetup(){
   pinMode(leftLightSensor, INPUT);   //sets the left light sensor signal pin to input
   goStop();                          //stops servos just in case still running
 }
+
+// MOVEMENT
 
 void goForward(){
  leftServo.write(90 + speed);
@@ -106,4 +113,41 @@ void goLeft(){
 void goStop(){
  leftServo.write(90);
  rightServo.write(90);
+}
+
+// LIGHTS
+
+void doLights(){
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousMillis > interval) {
+    previousMillis = currentMillis;           // save the last time you blinked the LED
+    switch (ledState) {
+      case 0:
+        digitalWrite(2, HIGH);
+        digitalWrite(3, LOW);
+        digitalWrite(4, LOW);
+        digitalWrite(5, LOW);
+        break;
+      case 1:
+        digitalWrite(2, LOW);
+        digitalWrite(3, HIGH);
+        digitalWrite(4, LOW);
+        digitalWrite(5, LOW);
+        break;
+      case 2:
+        digitalWrite(2, LOW);
+        digitalWrite(3, LOW);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, LOW);
+        break;
+      case 3:
+        digitalWrite(2, LOW);
+        digitalWrite(3, LOW);
+        digitalWrite(4, LOW);
+        digitalWrite(5, HIGH);
+        break;
+    }
+    ledState++;
+    if(ledState > 3) ledState = 0;
+  }
 }
