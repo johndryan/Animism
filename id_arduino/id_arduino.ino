@@ -65,7 +65,13 @@ void loop()
   SensorDifference = abs(SensorLeft - SensorRight);       // This calculates the difference between the two sensors and then saves it to an integer.
   
   if (proxVal > minDistance) {
+    // There's something in front
+    allLightsOn();
+    goBackward();
+    delay(300);
     goRight();
+    delay(600);
+    delay(300);
   } else {
     if (SensorLeft > SensorRight && SensorDifference > lightDiff) goRight();
     if (SensorLeft < SensorRight && SensorDifference > lightDiff) goLeft();
@@ -150,4 +156,11 @@ void doLights(){
     ledState++;
     if(ledState > 3) ledState = 0;
   }
+}
+
+void allLightsOn(){
+    digitalWrite(2, HIGH);
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
 }
