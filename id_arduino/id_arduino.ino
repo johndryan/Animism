@@ -34,22 +34,20 @@ int lightLevelTrigger = 350;
 // SETTINGS
 //--------------------------------------------------------------------------------- 
 
-int speed = 50;             // sets the speed of the robot (both servos) between 0 and 90
-int servoLeftOff = 90;      // If left servo can't be adjusted manually, set the stop value here
-int servoRightOff = 90;     // If right servo can't be adjusted manually, set the stop value here
+int speed = 20;             // sets the speed of the robot (both servos) between 0 and 90
 
 int minDistance = 400;      // proximity is triggered above this
 int lightDiff = 75;         // sensitivity in difference between light sensors
 
-long interval = 300;       // interval at which LEDs should blink (milliseconds)
+int interval = 300;       // interval at which LEDs should blink (milliseconds)
 
 // SETUP
 //---------------------------------------------------------------------------------
 
 void setup()                  
 {
+  randomSeed(analogRead(1));         //sets the random number seed with something mildly random
   serbSetup();                       //sets the state of all neccesary pins and adds servos to your sketch
-  randomSeed(analogRead(0));         //sets the random number seed with something mildly random
   delay(1000);
 }
 
@@ -70,9 +68,8 @@ void loop()
     // There's something in front
     allLightsOn();
     goBackward();
-    delay(300);
+    delay(200);
     goRight();
-    delay(600);
     delay(300);
   } else {
     if (SensorLeft > SensorRight && SensorDifference > lightDiff) goRight();
@@ -94,6 +91,13 @@ void serbSetup(){
   pinMode(rightLightSensor, INPUT);  //sets the right light sensor signal pin to input
   pinMode(leftLightSensor, INPUT);   //sets the left light sensor signal pin to input
   goStop();                          //stops servos just in case still running
+  // Choose a speed and light blink interval for this creature
+  speed = 1 + random(18);
+  interval = 950-(speed*50);
+  String message = "Speed: ";
+  message += speed;
+  message += ",  interval: ";
+  message += interval;
 }
 
 // MOVEMENT
