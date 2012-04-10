@@ -27,7 +27,9 @@ int SensorRight;
 int SensorDifference;
 int proxVal = 500;
 int ledState = 0;
+int ledOnOff = 0;
 long previousMillis = 0;
+int lightLevelTrigger = 350;
 
 // SETTINGS
 //--------------------------------------------------------------------------------- 
@@ -125,36 +127,60 @@ void goStop(){
 
 void doLights(){
   unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis > interval) {
-    previousMillis = currentMillis;           // save the last time you blinked the LED
-    switch (ledState) {
-      case 0:
-        digitalWrite(2, HIGH);
-        digitalWrite(3, LOW);
-        digitalWrite(4, LOW);
-        digitalWrite(5, LOW);
-        break;
-      case 1:
-        digitalWrite(2, LOW);
-        digitalWrite(3, HIGH);
-        digitalWrite(4, LOW);
-        digitalWrite(5, LOW);
-        break;
-      case 2:
-        digitalWrite(2, LOW);
-        digitalWrite(3, LOW);
-        digitalWrite(4, HIGH);
-        digitalWrite(5, LOW);
-        break;
-      case 3:
-        digitalWrite(2, LOW);
-        digitalWrite(3, LOW);
-        digitalWrite(4, LOW);
-        digitalWrite(5, HIGH);
-        break;
+  if (SensorLeft < lightLevelTrigger || SensorRight < lightLevelTrigger) {
+    // On and Off
+    if(currentMillis - previousMillis > interval) {
+      previousMillis = currentMillis;
+      switch (ledOnOff) {
+        case 0:
+          digitalWrite(2, HIGH);
+          digitalWrite(3, HIGH);
+          digitalWrite(4, HIGH);
+          digitalWrite(5, HIGH);
+          break;
+        case 1:
+          digitalWrite(2, LOW);
+          digitalWrite(3, LOW);
+          digitalWrite(4, LOW);
+          digitalWrite(5, LOW);
+          break;
+      }
+      ledOnOff++;
+      if(ledOnOff > 1) ledOnOff = 0;
     }
-    ledState++;
-    if(ledState > 3) ledState = 0;
+  } else {
+    // Do flash
+    if(currentMillis - previousMillis > interval) {
+      previousMillis = currentMillis;           // save the last time you blinked the LED
+      switch (ledState) {
+        case 0:
+          digitalWrite(2, HIGH);
+          digitalWrite(3, LOW);
+          digitalWrite(4, LOW);
+          digitalWrite(5, LOW);
+          break;
+        case 1:
+          digitalWrite(2, LOW);
+          digitalWrite(3, HIGH);
+          digitalWrite(4, LOW);
+          digitalWrite(5, LOW);
+          break;
+        case 2:
+          digitalWrite(2, LOW);
+          digitalWrite(3, LOW);
+          digitalWrite(4, HIGH);
+          digitalWrite(5, LOW);
+          break;
+        case 3:
+          digitalWrite(2, LOW);
+          digitalWrite(3, LOW);
+          digitalWrite(4, LOW);
+          digitalWrite(5, HIGH);
+          break;
+      }
+      ledState++;
+      if(ledState > 3) ledState = 0;
+    }
   }
 }
 
