@@ -29,7 +29,10 @@ int proxVal = 500;
 int ledState = 0;
 int ledOnOff = 0;
 long previousMillis = 0;
-int lightLevelTrigger = 350;
+long previousFeed = 0;
+long previousDrain = 0;
+int lightLevelTrigger = 400;
+int myLife = 0;
 
 // SETTINGS
 //--------------------------------------------------------------------------------- 
@@ -41,11 +44,17 @@ int lightDiff = 75;         // sensitivity in difference between light sensors
 
 int interval = 300;       // interval at which LEDs should blink (milliseconds)
 
+int depletionInterval = 1500;
+int feedInterval = 100;
+
+int maxLife = 35;
+
 // SETUP
 //---------------------------------------------------------------------------------
 
 void setup()                  
 {
+  Serial.begin(9600);
   randomSeed(analogRead(1));         //sets the random number seed with something mildly random
   serbSetup();                       //sets the state of all neccesary pins and adds servos to your sketch
   delay(1000);
@@ -56,6 +65,7 @@ void setup()
 
 void loop()                     
 {
+  //Sensors
   proxVal = analogRead(proxSensor);
   delay(1);
   SensorLeft = 1023 - analogRead(leftLightSensor);        // This reads the value of the sensor, then saves it to the corresponding integer.
@@ -63,21 +73,40 @@ void loop()
   SensorRight = 1023 - analogRead(rightLightSensor);      // This reads the value of the sensor, then saves it to the corresponding integer.
   delay(1);
   SensorDifference = abs(SensorLeft - SensorRight);       // This calculates the difference between the two sensors and then saves it to an integer.
-  
-  if (proxVal > minDistance) {
-    // There's something in front
-    allLightsOn();
-    goBackward();
-    delay(200);
-    goRight();
-    delay(300);
+    
+  if (myLife < 1) {
+    //I'm dead
+    //myLife = 0;
+    allLightsOff();
+    goStop();
   } else {
-    if (SensorLeft > SensorRight && SensorDifference > lightDiff) goRight();
-    if (SensorLeft < SensorRight && SensorDifference > lightDiff) goLeft();
-    if (SensorDifference < lightDiff) goForward();
+    //I'm alive
+    //update speed and interval
+    deplete();
+    speed = myLife/2;
+    if (speed > 30) {
+      interval = 50;
+    } else {
+      interval = 50+(maxLife*30)-(speed*30);
+    }
+    //Movement
+    if (proxVal > minDistance) {
+      // There's something in front
+      allLightsOn();
+      goBackward();
+      delay(200);
+      goRight();
+      delay(300);
+    } else {
+      if (SensorLeft > SensorRight && SensorDifference > lightDiff) goRight();
+      if (SensorLeft < SensorRight && SensorDifference > lightDiff) goLeft();
+      if (SensorDifference < lightDiff) goForward();
+    }
+    
+    doLights();
   }
-  
-  doLights();
+  doFeed();
+  if (myLife >= maxLife) myLife = maxLife;
 }
 
 // FUNCTIONS
@@ -92,12 +121,8 @@ void serbSetup(){
   pinMode(leftLightSensor, INPUT);   //sets the left light sensor signal pin to input
   goStop();                          //stops servos just in case still running
   // Choose a speed and light blink interval for this creature
-  speed = 1 + random(18);
-  interval = 950-(speed*50);
-  String message = "Speed: ";
-  message += speed;
-  message += ",  interval: ";
-  message += interval;
+  //myLife = 2 + random(18);
+  myLife = maxLife-10;
 }
 
 // MOVEMENT
@@ -193,4 +218,36 @@ void allLightsOn(){
     digitalWrite(3, HIGH);
     digitalWrite(4, HIGH);
     digitalWrite(5, HIGH);
+}
+
+void allLightsOff(){
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+}
+
+void deplete(){
+  unsigned long currentMillis = millis();
+  if(currentMillis - previousDrain > depletionInterval) {
+    previousDrain = currentMillis;
+    myLife--;
+    String message = "Depletion: ";
+    message += myLife;
+    Serial.println(message);
+  }
+}
+
+void doFeed(){
+  unsigned long currentMillis = millis();
+  if (SensorLeft < lightLevelTrigger || SensorRight < lightLevelTrigger) {
+    if(currentMillis - previousFeed > feedInterval) {
+      previousFeed = currentMillis;
+      myLife++;
+      if (myLife == 1) myLife++;
+      String message = "Feed: ";
+      message += myLife;
+      Serial.println(message);
+    } 
+  }
 }
